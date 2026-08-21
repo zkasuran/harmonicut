@@ -72,18 +72,18 @@
   <h2>Two differentiation strategies, one gradient</h2>
   <p class="lead">The forward map is: design coefficients &rarr; a smooth thickness profile &rarr; assemble finite-element matrices &rarr; a generalized eigensolve &rarr; the flexural frequencies. That eigensolve is a black box for autodiff: <code>scipy.linalg.eigh</code> is a compiled LAPACK call JAX cannot trace. Eigen-derivatives are ill-conditioned near the modal crossings an optimiser drives straight into.</p>
   <div class="cards">
-    <div class="card"><h3>geometry (JAX)</h3><p>Coefficients to a smooth symmetric undercut. Analytic autodiff, so it serves exact jacobian, jvp and vjp.</p></div>
-    <div class="card"><h3>beam_eigen (numpy + scipy)</h3><p>Profile to frequencies through the black-box eigensolve. Reports a finite-difference jacobian, jvp and vjp.</p></div>
+    <div class="card" data-step><h3>geometry (JAX)</h3><p>Coefficients to a smooth symmetric undercut. Analytic autodiff, so it serves exact jacobian, jvp and vjp.</p></div>
+    <div class="card" data-step><h3>beam_eigen (numpy + scipy)</h3><p>Profile to frequencies through the black-box eigensolve. Reports a finite-difference jacobian, jvp and vjp.</p></div>
   </div>
-  <p class="lead" style="margin-top:18px">Tesseract makes the two compose. Each is a self-contained component with the same derivative contract. <code>tesseract-jax</code> stitches the analytic jacobian of one to the finite-difference jacobian of the other into a single end-to-end gradient. Neither side can produce that gradient alone. That is Tesseract as load-bearing infrastructure, not a costume.</p>
+  <p class="lead" data-step style="margin-top:18px">Tesseract makes the two compose. Each is a self-contained component with the same derivative contract. <code>tesseract-jax</code> stitches the analytic jacobian of one to the finite-difference jacobian of the other into a single end-to-end gradient. Neither side can produce that gradient alone. That is Tesseract as load-bearing infrastructure, not a costume.</p>
 </section>
 
 <section id="result">
   <p class="kick">Gradients doing real work</p>
   <h2>Verified across the boundary, then put to work</h2>
-  <div class="verdict"><b>jax.grad</b> through both containers matches a global finite-difference check of the whole pipeline to a max relative error of about <b>1e-3</b>. The gradient really does cross the autodiff &harr; finite-difference boundary.</div>
-  <p class="lead" style="margin-top:16px">Driven by that gradient, the objective falls from 21.0 to 0.79 in 400 steps, while the first three partials move from an untuned <b>2.82 : 5.61</b> to <b>3.84 : 9.12</b>, toward the marimba ideal 1 : 4 : 10. The undercut the optimiser carves is deep in the middle and full at the struck ends, which is exactly the shape instrument makers cut by hand: an independent check that the gradients point the right way.</p>
-  <figure style="margin-top:22px">
+  <div class="verdict" data-step><b>jax.grad</b> through both containers matches a global finite-difference check of the whole pipeline to a max relative error of about <b>1e-3</b>. The gradient really does cross the autodiff &harr; finite-difference boundary.</div>
+  <p class="lead" data-step style="margin-top:16px">Driven by that gradient, the objective falls from 21.0 to 0.79 in 400 steps, while the first three partials move from an untuned <b>2.82 : 5.61</b> to <b>3.84 : 9.12</b>, toward the marimba ideal 1 : 4 : 10. The undercut the optimiser carves is deep in the middle and full at the struck ends, which is exactly the shape instrument makers cut by hand: an independent check that the gradients point the right way.</p>
+  <figure data-step style="margin-top:22px">
     <img src="./summary.png" alt="Undercut profile, mode shapes, partials converging and the loss curve" />
     <figcaption>Left to right, top to bottom: the carved undercut, the first three mode shapes of the tuned bar, the partials converging toward 4 and 10, then the objective descending.</figcaption>
   </figure>
@@ -104,5 +104,16 @@ python scripts/visualize.py    # the figure and the animation above</pre>
   Built on tesseract-core and tesseract-jax (Pasteur Labs) with JAX, scipy and optax. Apache-2.0. Tesseract Hackathon 2026, inverse-design track. AI assistance was used in the build; the design, the physics and the verification are the author's.
 </footer>
 </div>
+<script>
+  // Reveal contract for the demo-video capture kit: reveal the first k [data-step]
+  // items inside a section by opacity, never display, so nothing reflows.
+  window.setReveal = function (k, scope) {
+    var sel = (scope ? scope + " " : "") + "[data-step]";
+    document.querySelectorAll(sel).forEach(function (el, i) {
+      el.style.opacity = i < k ? "1" : "0.12";
+      el.style.transition = "opacity .28s ease";
+    });
+  };
+</script>
 </body>
 </html>
