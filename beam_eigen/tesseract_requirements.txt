@@ -1,0 +1,3 @@
+# Tesseract requirements for the beam eigensolver (numpy black box + FD jacobian)
+numpy
+scipy
