@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>harmonicut: tuning a marimba bar by composing two Tesseracts</title>
+<meta name="description" content="Inverse-design a marimba bar's undercut so its overtones ring harmonic, by composing an autodiff geometry Tesseract with a black-box finite-difference eigensolver Tesseract into one differentiable pipeline." />
+<style>
+  :root{--bg:#140f0a;--panel:#1f1810;--border:#3a2e1f;--ink:#f3ece1;--mut:#b7a68f;--faint:#8a785f;--gold:#e6a94a;--teal:#46d3a2;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--sans:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+  *{box-sizing:border-box} html{scroll-behavior:smooth}
+  body{margin:0;background:radial-gradient(1100px 560px at 72% -10%,#2a1f12 0%,#140f0a 55%);color:var(--ink);font-family:var(--sans);line-height:1.6}
+  .wrap{max-width:940px;margin:0 auto;padding:0 22px}
+  a{color:var(--teal);text-decoration:none} a:hover{text-decoration:underline}
+  code{font-family:var(--mono);font-size:.92em;background:#120d08;border:1px solid var(--border);border-radius:5px;padding:1px 6px}
+  .kick{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700;margin:0 0 12px}
+  nav{display:flex;justify-content:space-between;align-items:center;padding:20px 0;font-family:var(--mono);font-size:14px}
+  nav .brand{color:var(--gold);font-weight:700} nav a{color:var(--mut);margin-left:18px}
+  header{padding:40px 0 26px}
+  h1{font-size:clamp(32px,5vw,50px);line-height:1.05;margin:0 0 14px;letter-spacing:-1.4px}
+  h1 .g{color:var(--gold)}
+  .tag{font-size:clamp(16px,2vw,20px);color:var(--mut);max-width:680px}
+  .cta{margin-top:24px;display:flex;gap:11px;flex-wrap:wrap}
+  .btn{display:inline-block;padding:11px 18px;border-radius:9px;font-weight:600;font-size:14.5px;border:1px solid var(--border)}
+  .btn.pri{background:var(--gold);color:#2a1c05;border-color:var(--gold)} .btn.ghost{color:var(--ink)}
+  .stats{display:flex;gap:26px;margin-top:24px;flex-wrap:wrap}
+  .stat b{display:block;font-family:var(--mono);font-size:19px;color:var(--ink)} .stat span{font-size:12.5px;color:var(--faint)}
+  figure{margin:0} img{max-width:100%;border:1px solid var(--border);border-radius:12px;display:block}
+  figcaption{color:var(--faint);font-size:13px;margin-top:8px;text-align:center}
+  section{padding:40px 0;border-top:1px solid var(--border)}
+  h2{font-size:clamp(22px,3vw,28px);letter-spacing:-0.6px;margin:0 0 12px}
+  .lead{color:var(--mut);max-width:720px}
+  .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:8px}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:18px}
+  .card h3{margin:0 0 6px;font-size:16px;color:var(--gold)} .card p{margin:0;color:var(--mut);font-size:14px}
+  pre{background:#100b06;border:1px solid var(--border);border-radius:10px;padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:13px;color:#e7dcc9}
+  .verdict{background:#12271e;border:1px solid #24503c;border-left:3px solid var(--teal);border-radius:10px;padding:14px 16px;color:#bfeeda;font-size:14.5px}
+  footer{padding:34px 0 64px;color:var(--faint);font-size:13px;border-top:1px solid var(--border)}
+  @media(max-width:720px){.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav>
+  <span class="brand">harmonicut</span>
+  <span><a href="#why">Why Tesseract</a> <a href="#result">Result</a> <a href="#repro">Reproduce</a> <a href="https://github.com/zkasuran/harmonicut">GitHub</a></span>
+</nav>
+<header>
+  <p class="kick">Tesseract Hackathon 2026 &middot; inverse design &amp; shape optimization</p>
+  <h1>Tune a marimba bar by composing<br>two Tesseracts across a <span class="g">real boundary</span>.</h1>
+  <p class="tag">A struck bar rings inharmonic at 1 : 2.76 : 5.40. harmonicut carves the undercut that pulls its overtones toward the musical 1 : 4 : 10, by running gradient descent through a pipeline whose two halves are differentiated in completely different ways.</p>
+  <div class="cta">
+    <a class="btn pri" href="https://github.com/zkasuran/harmonicut">View the code</a>
+    <a class="btn ghost" href="#repro">Reproduce it</a>
+  </div>
+  <div class="stats">
+    <div class="stat"><b>autodiff &harr; FD</b><span>the boundary crossed</span></div>
+    <div class="stat"><b>~1e-3</b><span>grad vs global finite-diff</span></div>
+    <div class="stat"><b>2.82:5.61 &rarr; 3.84:9.12</b><span>partials retuned</span></div>
+    <div class="stat"><b>Apache-2.0</b><span>reproducible</span></div>
+  </div>
+</header>
+
+<section>
+  <figure>
+    <img src="./morph.gif" alt="The undercut morphing while the partials slide toward 4 and 10" />
+    <figcaption>The optimiser carves the undercut (left) while the first two overtone ratios climb toward 4 and 10 (right). Every step is a gradient through two composed Tesseracts.</figcaption>
+  </figure>
+</section>
+<section id="why">
+  <p class="kick">Why this is a Tesseract problem</p>
+  <h2>Two differentiation strategies, one gradient</h2>
+  <p class="lead">The forward map is: design coefficients &rarr; a smooth thickness profile &rarr; assemble finite-element matrices &rarr; a generalized eigensolve &rarr; the flexural frequencies. That eigensolve is a black box for autodiff: <code>scipy.linalg.eigh</code> is a compiled LAPACK call JAX cannot trace. Eigen-derivatives are ill-conditioned near the modal crossings an optimiser drives straight into.</p>
+  <div class="cards">
+    <div class="card"><h3>geometry (JAX)</h3><p>Coefficients to a smooth symmetric undercut. Analytic autodiff, so it serves exact jacobian, jvp and vjp.</p></div>
+    <div class="card"><h3>beam_eigen (numpy + scipy)</h3><p>Profile to frequencies through the black-box eigensolve. Reports a finite-difference jacobian, jvp and vjp.</p></div>
+  </div>
+  <p class="lead" style="margin-top:18px">Tesseract makes the two compose. Each is a self-contained component with the same derivative contract. <code>tesseract-jax</code> stitches the analytic jacobian of one to the finite-difference jacobian of the other into a single end-to-end gradient. Neither side can produce that gradient alone. That is Tesseract as load-bearing infrastructure, not a costume.</p>
+</section>
+
+<section id="result">
+  <p class="kick">Gradients doing real work</p>
+  <h2>Verified across the boundary, then put to work</h2>
+  <div class="verdict"><b>jax.grad</b> through both containers matches a global finite-difference check of the whole pipeline to a max relative error of about <b>1e-3</b>. The gradient really does cross the autodiff &harr; finite-difference boundary.</div>
+  <p class="lead" style="margin-top:16px">Driven by that gradient, the objective falls from 21.0 to 0.79 in 400 steps, while the first three partials move from an untuned <b>2.82 : 5.61</b> to <b>3.84 : 9.12</b>, toward the marimba ideal 1 : 4 : 10. The undercut the optimiser carves is deep in the middle and full at the struck ends, which is exactly the shape instrument makers cut by hand: an independent check that the gradients point the right way.</p>
+  <figure style="margin-top:22px">
+    <img src="./summary.png" alt="Undercut profile, mode shapes, partials converging and the loss curve" />
+    <figcaption>Left to right, top to bottom: the carved undercut, the first three mode shapes of the tuned bar, the partials converging toward 4 and 10, then the objective descending.</figcaption>
+  </figure>
+</section>
+
+<section id="repro">
+  <p class="kick">Reproduce</p>
+  <h2>Docker and Python, no keys</h2>
+  <pre>pip install "tesseract-core[runtime]" tesseract-jax "jax[cpu]" scipy optax matplotlib equinox
+tesseract build geometry
+tesseract build beam_eigen
+python scripts/optimize.py     # gradient-boundary check, then the inverse design
+python scripts/visualize.py    # the figure and the animation above</pre>
+  <p class="lead" style="margin-top:14px">Everything is deterministic and offline. The full writeup, the two Tesseracts and the scripts are in the <a href="https://github.com/zkasuran/harmonicut">repository</a>.</p>
+</section>
+
+<footer>
+  Built on tesseract-core and tesseract-jax (Pasteur Labs) with JAX, scipy and optax. Apache-2.0. Tesseract Hackathon 2026, inverse-design track. AI assistance was used in the build; the design, the physics and the verification are the author's.
+</footer>
+</div>
+</body>
+</html>
