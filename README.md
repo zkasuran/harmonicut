@@ -2,12 +2,20 @@
 
 **Tuning a marimba bar by composing two Tesseracts across a real boundary.**
 
-Track: **Inverse design & shape optimization**. License: Apache-2.0.
+Tesseract Hackathon 2026. Track: **Inverse design and shape optimization**. Licensed Apache-2.0.
 
 harmonicut inverse-designs the undercut of a struck bar (marimba / xylophone) so
 its first three flexural partials ring harmonic, driving toward the ideal
 **1 : 4 : 10** marimba tuning. It does this by composing two Tesseracts into one
 end-to-end differentiable function and running gradient descent through them.
+
+## Demo
+
+[![Watch the harmonicut demo](docs/demo-thumb.jpg)](https://youtu.be/mVvXn_tomAI)
+
+A two minute walkthrough of the composition: the end-to-end gradient matching a
+global finite-difference check to about 1e-3, then the bar tuning from an untuned
+2.82 : 5.61 toward the marimba ideal 1 : 4 : 10. [Watch on YouTube.](https://youtu.be/mVvXn_tomAI)
 
 ![summary](artifacts/summary.png)
 
